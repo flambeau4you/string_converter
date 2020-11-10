@@ -3,10 +3,10 @@ package org.bh.string;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -30,12 +30,15 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
 public class App {
+	private static final String FILE_PATTERN = "patterns.yaml";
 	private static Options options = new Options();
 
+	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
 		// define arguments
 		options.addOption("h", "help", false, "Show this help message.");
-		options.addOption("cp", "copy", false, "Copy the results to the clipboard.");
+		options.addOption("p", "pattern", true, "Make patterned string.");
+		options.addOption("sp", "show_pattern", false, "Show configured patterns.");
 		options.addOption("dt8", "date_8", false, "Current date. (YYYYMMDD)");
 		options.addOption("dt10", "date_10", false, "Current date. (YYYY-MM-DD)");
 		options.addOption("c", "camel", false, "Convert all to camel style. AB_Cd_ef -> abCdEf");
@@ -101,6 +104,27 @@ public class App {
 				exitWithHelp();
 			} else {
 				String str = inputString;
+				
+				if (cmd.hasOption("p") || cmd.hasOption("sp")) {
+					Map<String, String> patterns = null;
+					Yaml yaml = new Yaml();
+					try {
+                        patterns = (Map<String, String>) yaml.load(new FileReader(new File(FILE_PATTERN)));
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                        return;
+                    }
+					
+					if (cmd.hasOption("sp")) {
+                        for (Map.Entry<String, String> entry : patterns.entrySet()) {
+                            System.out.println(entry.getKey() + ": " + entry.getValue());
+                        }
+                        return;
+					} else {
+						String patternCode = cmd.getOptionValue("p");
+						str = makePatternedString(patterns, patternCode, str);
+					}
+				}
 				
 				if (cmd.hasOption("dt8")) {	
 					str = (new SimpleDateFormat("yyyyMMdd", Locale.getDefault())).format(new Date());
@@ -250,14 +274,10 @@ public class App {
 				}
 
 				if (str != null && !str.isEmpty()) {
-					if (cmd.hasOption("cp")) {
-						StringSelection selection = new StringSelection(str);
-						clipboard.setContents(selection, selection);
-					}
-					System.out.println(str);
-				} else
+					System.out.println(str.trim());
+				} else {
 					System.out.println("There are no changings.");
-
+				}
 			}
 		} catch (ParseException e) {
 			exitWithHelp(e.getMessage());
@@ -265,6 +285,44 @@ public class App {
 			System.out.println("An error is occured!");
 			e.printStackTrace();
 		}
+	}
+	
+	private static String makePatternedString(Map<String, String> patterns, String code, String inputedString) {
+		if (patterns == null || patterns.size() == 0) {
+            System.err.println("The clip file contents are empty.");
+            return null;
+        }
+
+        if (code == null || code.isEmpty()) {
+            System.err.println("The code is undefined.");
+            return null;
+        }
+
+        String pattern = patterns.get(code);
+        if (pattern == null) {
+            System.err.println("The code '" + code + "' is unknown.");
+            return null;
+        }
+
+        // replace with parameter
+        String[] params = inputedString.split(" ");
+        for (int i = 0; i < params.length; i++) {
+            String param = params[i];
+            if (param.length() > 1) {
+                // upper case first character
+                pattern = pattern.replace("{u" + i + "}", param.substring(0, 1).toUpperCase() + param.substring(1));
+                // lower case first character
+                pattern = pattern.replace("{l" + i + "}", param.substring(0, 1).toLowerCase() + param.substring(1));
+            }
+
+            if (param.length() > 2 && param.indexOf('_') > 0) {
+                // under bar to camel case
+                pattern = pattern.replace("{c" + i + "}", convertUnderscoreToCarmel(param));
+            }
+            pattern = pattern.replace("{s" + i + "}", convertCarmelToUnderscore(param));
+            pattern = pattern.replace("{" + i + "}", params[i]);
+        }
+        return pattern;
 	}
 
 	/**
