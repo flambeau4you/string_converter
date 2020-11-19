@@ -39,33 +39,31 @@ public class App {
 		options.addOption("h", "help", false, "Show this help message.");
 		options.addOption("p", "pattern", true, "Make patterned string.");
 		options.addOption("sp", "show_pattern", false, "Show configured patterns.");
-		options.addOption("dt8", "date_8", false, "Current date. (YYYYMMDD)");
-		options.addOption("dt10", "date_10", false, "Current date. (YYYY-MM-DD)");
+		options.addOption("dt8", "date_8", false, "Current date. Format: YYYYMMDD");
+		options.addOption("dt10", "date_10", false, "Current date. Format: YYYY-MM-DD");
 		options.addOption("c", "camel", false, "Convert all to camel style. AB_Cd_ef -> abCdEf");
 		options.addOption("cd", "camel_declaring", false, "Convert all to camel style with declaring. AB_Cd_ef -> private String abCdEf;");
 		options.addOption("cu", "camel_underscore", false, "Convert underscore to camel style only. AB_Cd_ef -> AB_CdEf");
-		options.addOption("cj", "camel_java", false, "Convert java variables to camel style. AB_Cd_ef -> ABCdEf");
-		options.addOption("cjm", "camel_java_method", false, "Convert java method underscore to camel style. abc.ab_cd_ef_gh() -> abc.abCdEfGh()");
-		options.addOption("cm", "camel_mybatis", false, "Convert queries of MyBatis to camel style.");
-		options.addOption("cmu", "camel_mybatis_only", false, "Convert queries of MyBatis to camel style only.");
-		options.addOption("sc", "camel_space", false, "Convert camel style to space speration style.");
-		options.addOption("us", "space_underscore", false, "Convert space camel style to underscore style.");
-		options.addOption("u", "underscore", false, "Convert all to underscore style.");
-		options.addOption("um", "underscore_mybatis", false, "Convert all to underscore style for mybatis.");
-		options.addOption("ru", "remove_underscore", false, "Remove all underscore.");
-		options.addOption("f", "first", false, "Convert fist character to upper case.");
-		options.addOption("up", "upper", false, "Convert all character to upper case.");
-		options.addOption("qs", "query_select", false, "Convert to seleting query.");
+		options.addOption("cj", "camel_java", false, "Convert Java variables to camel style. private String AB_Cd_ef -> private String ABCdEf");
+		options.addOption("cjm", "camel_java_method", false, "Convert Java method underscore to camel style. abc.ab_cd_ef_gh() -> abc.abCdEfGh()");
+		options.addOption("cm", "camel_mybatis", false, "Convert queries of MyBatis to camel style. <result property=\"ab_cd_ef\" column=\"ab_cd_ef\"/> -> <result property=\"abCdEf\" column=\"abCdEf\"/>");
+		options.addOption("cmu", "camel_mybatis_only", false, "Convert variables of MyBatis to camel style only. <result property=\"ab_cd_ef\" column=\"ab_cd_ef\"/> -> <result property=\"abCdEf\" column=\"ab_cd_ef\"/>");
+		options.addOption("um", "underscore_mybatis", false, "Convert all to underscore style for mybatis. <result property=\"abCdEf\" column=\"abCdEf\"/> -> <result property=\"abCdEf\" column=\"ab_cd_ef\"/>");
+		options.addOption("sc", "camel_space", false, "Convert camel style to space separate style. AbCdEf -> Ab cd ef");
+		options.addOption("us", "space_underscore", false, "Convert space camel style to underscore style. Ab Cd ef -> ab_cd_ef");
+		options.addOption("u", "underscore", false, "Convert all to underscore style. AbCdEF -> Ab_cd_e_f");
+		options.addOption("ru", "remove_underscore", false, "Change underscores to spaces. ab_cd -> Ab Cd");
+		options.addOption("f", "first", false, "Convert first character to upper case. ab -> Ab");
+		options.addOption("up", "upper", false, "Convert all characters to upper case. ab -> AB");
+		options.addOption("qs", "query_select", false, "Convert to selecting query.");
 		options.addOption("qu", "query_update", false, "Convert to updating query with if statement.");
 		options.addOption("qi", "query_insert", false, "Convert to inserting query.");
 		options.addOption("qw", "query_where", false, "Convert to where query with if statement.");
 		options.addOption("qr", "query_result", false, "Convert to query result object.");
-		options.addOption("fjc", "find_java_camel", false, "Find camel variables in the directory path.");
-		options.addOption("nc", "new_code", false, "Convert old style code constant to new code constant style.");
 		options.addOption("rm", "redmine", false, "Convert Markdown syntax to Redmine syntax.");
 		options.addOption("md", "markdown", false, "Convert Redmine syntax to Markdown syntax.");
-		options.addOption("rr", "redmine_respect", false, "Convert Markdown syntax to Redmine syntax and make respect.");
-		options.addOption("mr", "markdown_rough", false, "Convert Redmine syntax to Markdown syntax and make rougth.");
+		options.addOption("rr", "redmine_respect", false, "Convert Markdown syntax to Redmine syntax and make respect in Korean.");
+		options.addOption("mr", "markdown_rough", false, "Convert Redmine syntax to Markdown syntax and make rougth in Korean.");
 		options.addOption("tx", "text", false, "Convert Markdown syntax to plain text.");
 		options.addOption("rs", "respect", false, "Convert rougth words to respect in Korean.");
 		options.addOption("rg", "rough", false, "Convert respect words to rough in Korean.");
@@ -73,7 +71,7 @@ public class App {
 		options.addOption("pj", "pretty_json", false, "Make JSON pretty.");		
 		options.addOption("spj", "strip_pretty_json", false, "Make JSON striped and pretty.");		
 		options.addOption("yj", "yaml_json", false, "Convert YAML to JSON.");		
-		options.addOption("cs", "convert_special", false, "Convert special characters.");
+		options.addOption("cs", "convert_special", false, "Convert escaped characters to real characters.");
 		options.addOption("gm", "git_message", false, "Convert '-' to ': ' and '_' to ' '.");
 
 		// parsing arguments
@@ -159,7 +157,7 @@ public class App {
 				}
 				
 				if (cmd.hasOption("cmu")) {
-					str = convertMyBatisUnderscoreToCarmelOnly(str);
+					str = convertMyBatisUnderscoreVariablesToCarmelOnly(str);
 				}
 				
 				if (cmd.hasOption("sc")) {
@@ -212,14 +210,6 @@ public class App {
 
 				if (cmd.hasOption("s")) {
 					str = convertStaticString(str);
-				}
-
-				if (cmd.hasOption("fjc")) {
-					str = findJavaCamelVariables(str);
-				}
-
-				if (cmd.hasOption("nc")) {
-					str = convertNewCodeConstantStyle(str);
 				}
 
 				if (cmd.hasOption("rm")) {
@@ -487,7 +477,7 @@ public class App {
 		return convertedString.toString();
 	}
 	
-	private static String convertMyBatisUnderscoreToCarmelOnly(String inputString) {
+	private static String convertMyBatisUnderscoreVariablesToCarmelOnly(String inputString) {
 		boolean starting = false;
 
 		StringBuffer convertedString = new StringBuffer();
@@ -556,8 +546,6 @@ public class App {
 	}
 
 	private static String convertCarmelToUnderscore(String inputString) {
-		//inputString = inputString.toLowerCase();
-
 		StringBuffer convertedString = new StringBuffer();
 		int count = 0;
 		for (char currentChar : inputString.toCharArray()) {
@@ -756,8 +744,11 @@ public class App {
 		for (String line : lines) {
 			String name = line.trim();
 			String camelName = convertUnderscoreToCarmel(name);
-			convertedString.append("<if test=\"" + camelName + " != null and " + camelName + ".length() > 0\">\r\n" 
-					+ "    and " + name + " = #{" + camelName + "}\r\n</if>");
+			convertedString.append("<if test=\"" + camelName + " != null");
+			if (!name.toLowerCase().startsWith("is_")) {				
+				convertedString.append(" and " + camelName + ".length() > 0");
+			}
+			convertedString.append("\">\r\n"+ "    and " + name + " = #{" + camelName + "}\r\n</if>");
 			++count;
 			if (count < lines.length) {
 				convertedString.append("\r\n");
@@ -787,56 +778,6 @@ public class App {
 
 		return convertedString.toString();
 	}
-	
-	private static String findJavaCamelVariables(String dirPath) {
-		// inputString = inputString.toLowerCase();
-		
-		List<File> fileList = new ArrayList<>();
-		listFiles(dirPath, fileList); 
-
-		StringBuffer found = new StringBuffer();
-	    for (File file : fileList) {
-	    	if (file.getName().endsWith(".java")) {
-			    String inputString;
-				try {
-					inputString = readFile(file);
-				} catch (IOException e) {
-					return e.toString();
-				}
-				
-				int lineCount = 1;
-				int spaceCount = 0;
-				int lastChar = ' ';
-				String lastString = "";
-				for (char currentChar : inputString.toCharArray()) {
-					if (currentChar == '\n') {
-						++lineCount;
-					}
-					if (lastChar != ' ' && lastChar != '\t' && currentChar == ' ') {
-						++spaceCount;
-					} else if (currentChar == ';' || currentChar == '{' || currentChar == '=' || currentChar == '\t' || currentChar == '\n') {
-						spaceCount = 0;
-						lastString = "";
-					} else if (lastString.indexOf("public String") >= 0) {
-						break;
-					}
-					
-					if (spaceCount == 2 && lastString.indexOf("private ") >= 0 && Character.isUpperCase(currentChar)) {
-						found.append(file.getAbsolutePath() + ": " + lineCount + " (" + lastString.trim() + "...)\n");
-						spaceCount = 0;
-					}
-					lastChar = currentChar;
-					
-					if (spaceCount < 2) {
-						lastString += currentChar;
-					}
-				}
-				
-			}
-	    }
-
-		return found.toString();
-	}
 
 	/**
 	 * Convert to 'public static final String STR = \"STR\";'
@@ -852,20 +793,6 @@ public class App {
 		}
 
 		return convertedString.toString();
-	}
-	
-	private static String convertNewCodeConstantStyle(String inputString) {
-		String convertedString = null;
-		if (inputString.indexOf('.') > 0) {
-			String[] ss = inputString.split("\\.");
-			if (ss.length == 2) {
-				convertedString = "CodeConstant.scodeByValue(\"" + ss[0] + "\", \"" + ss[1] + "\")";
-			} 
-		} else {
-			convertedString = "CodeConstant.scodeByValue(\"" + inputString + ", )";
-		}
-		
-		return convertedString;
 	}
 	
 	private static String convertMarkdownToRedmine(String inputString) {
@@ -1054,33 +981,9 @@ public class App {
 		if (badArgument != null && badArgument.length() > 0)
 			System.out.println("Invalid argument: " + badArgument);
 		System.out.println("Convert clipboard strings to other formated strings.");
+		System.out.println("If the STRING is not inputed, the clipboard string is used.");
 		HelpFormatter formater = new HelpFormatter();
 		formater.printHelp("java -jar string.jar [OPTION..] STRING", options);
-		System.out.println("If the STRING is not inputed, the clipboard string is used.");
 		System.exit(0);
-	}
-	
-	private static void listFiles(String directoryName, List<File> files) {
-	    File directory = new File(directoryName);
-
-	    // get all the files from a directory
-	    File[] fList = directory.listFiles();
-	    for (File file : fList) {
-	        if (file.isFile()) {
-	            files.add(file);
-	        } else if (file.isDirectory()) {
-	            listFiles(file.getAbsolutePath(), files);
-	        }
-	    }
-	}
-	
-	private static String readFile(File file) throws IOException {
-	    String result = "";
-	    BufferedReader in = new BufferedReader(new FileReader(file));
-	    String str;
-	    while ((str = in.readLine()) != null) 
-	        result += str + "\n";
-	    in.close();
-	    return result;
 	}
 }
