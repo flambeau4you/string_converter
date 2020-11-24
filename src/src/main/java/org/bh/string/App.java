@@ -951,7 +951,7 @@ public class App {
 	private static String makeJsonPretty(String inputString) {
 		String json = inputString.replaceAll("\n", "").replaceAll("\r", "");
 		JsonElement jsonElement = JsonParser.parseString(json);
-		String prettyJson = new GsonBuilder().setPrettyPrinting().create().toJson(jsonElement);		
+		String prettyJson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create().toJson(jsonElement);		
 		return prettyJson;
 	}
 	
