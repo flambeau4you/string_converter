@@ -55,7 +55,7 @@ public class App {
 		options.addOption("ru", "remove_underscore", false, "Change underscores to spaces. ab_cd -> Ab Cd");
 		options.addOption("f", "first", false, "Convert first character to upper case. ab -> Ab");
 		options.addOption("up", "upper", false, "Convert all characters to upper case. ab -> AB");
-		options.addOption("qs", "query_select", false, "Convert to selecting query.");
+		options.addOption("qs", "query_select", true, "Convert to selecting query.");
 		options.addOption("qu", "query_update", false, "Convert to updating query with if statement.");
 		options.addOption("qi", "query_insert", false, "Convert to inserting query.");
 		options.addOption("qw", "query_where", false, "Convert to where query with if statement.");
@@ -189,7 +189,8 @@ public class App {
 				}
 
 				if (cmd.hasOption("qs")) {
-					str = convertSelectingQuery(str);
+					String tableName = cmd.getOptionValue("qs");
+					str = convertSelectingQuery(str, tableName);
 				}
 
 				if (cmd.hasOption("qu")) {
@@ -654,9 +655,10 @@ public class App {
 		return inputString.toUpperCase();
 	}
 
-	private static String convertSelectingQuery(String inputString) {
+	private static String convertSelectingQuery(String inputString, String tableName) {
 		StringBuffer convertedString = new StringBuffer();
 		String[] lines = inputString.split("\n");
+		
 		int count = 0;
 		for (String line : lines) {
 			String name = line.trim();
@@ -664,13 +666,12 @@ public class App {
 				convertedString.append("date_format(" + name + ", '%Y-%m-%d %H:%i:%s') as " + name);
 			} else {
 				convertedString.append(name);
-				if (name.endsWith("_CD"))
-				{
+				if (name.endsWith("_CD")) {
 					String codeColumn = name.substring(0, name.length() - 3);
-					convertedString.append(",\r\ngetCodeValue('', '" + codeColumn + "', " + name + ") " + codeColumn + "_VALUE");
+					convertedString.append(",\r\ngetCodeValue('" + tableName + "', '" + codeColumn + "', " + name + ") " + codeColumn + "_VALUE");
 				} else if (name.endsWith("STATE") || name.endsWith("STATUS"))
 				{
-					convertedString.append(", \r\ngetCodeValue('', '" + name + "', " + name + ") " + name + "_VALUE");
+					convertedString.append(", \r\ngetCodeValue('" + tableName + "', '" + name + "', " + name + ") " + name + "_VALUE");
 				}
 			}
 			++count;
