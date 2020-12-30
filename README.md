@@ -1,10 +1,10 @@
 # String Converter
 
-It converts text strings to other formated strings.
+It converts text strings to other formatted strings.
 
 ## Usage
 
-```
+```txt
 usage: java -jar string.jar [OPTION..] STRING
  -c,--camel                  Convert all to camel style. AB_Cd_ef ->
                              abCdEf
@@ -68,11 +68,11 @@ usage: java -jar string.jar [OPTION..] STRING
  -yj,--yaml_json             Convert YAML to JSON.
 ```
 
-If the STRING is not inputed, the clipboard string is used.
+If the STRING is not inputted, the clipboard string is used.
 
 ## Pattern
 
-It can insert inputed string to a pattern format string.
+It can insert inputted string to a pattern format string.
 The pattern configuration file name must be 'patterns.yaml'. And the file must exist in the working directory.
 
 ### Examples
@@ -87,7 +87,7 @@ chk_null: {0} == null ? null : {0}.toString()
 
 And run as below.
 
-```
+```bash
 $ java -jar string.jar -p wire StudentService
 @Autowired
 private StudentService studentService;
@@ -105,11 +105,11 @@ You can copy the results to the clipboard as below.
 
 Below keywords are special meaning in the patterns.yaml.
 
-* {0}, {1}, ...: Inputed parameters.
-* {l0}: Insert first charactor as lower case. Ex: MyCar -> myCar
-* {u0}: Insert first charactor as upper case. Ex: myCar -> MyCar
+* {0}, {1}, ...: Inputted parameters.
+* {l0}: Insert first character as lower case. Ex: MyCar -> myCar
+* {u0}: Insert first character as upper case. Ex: myCar -> MyCar
 * {s0}: Insert as underscore string from camel string. Ex: MyCar -> my_car
-* {c0}: Insert as camel string from underscore string. Ex: my_car -> myCar 
+* {c0}: Insert as camel string from underscore string. Ex: my_car -> myCar
 
 ## Java
 
@@ -119,7 +119,7 @@ Convert underscore variables to camel case variables in Java.
 
 Clipboard strings:
 
-```
+```txt
 private String id;
 private String name;
 private String cluster_name;
@@ -136,7 +136,7 @@ Execute
 
 Output:
 
-```
+```txt
 private String id;
 private String name;
 private String clusterName;
