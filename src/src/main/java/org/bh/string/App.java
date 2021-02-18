@@ -966,9 +966,23 @@ public class App {
 	
 	private static String makeJsonPretty(String inputString) {
 		String json = inputString.replaceAll("\n", "").replaceAll("\r", "");
-		JsonElement jsonElement = JsonParser.parseString(json);
-		String prettyJson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create().toJson(jsonElement);		
-		return prettyJson;
+		JsonElement jsonElement = null;
+		try
+		{
+			jsonElement = JsonParser.parseString(json);
+		} catch (Exception e)
+		{
+			System.out.println("Invalid JSON!\n" + json);
+			e.printStackTrace();
+			System.exit(0);
+		}
+		
+		if (jsonElement != null) {
+			String prettyJson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create().toJson(jsonElement);		
+			return prettyJson;
+		} else {
+			return null;
+		}
 	}
 	
 	private static String yamlToJson(String yamlString) {
