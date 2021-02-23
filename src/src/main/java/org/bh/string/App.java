@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.text.SimpleDateFormat;
+import java.util.Base64;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
@@ -54,36 +55,34 @@ public class App {
 		options.addOption("dt10", "date_10", false, "Current date. Format: YYYY-MM-DD");
 		options.addOption("c", "camel", false, "Convert all to camel style. AB_Cd_ef -> abCdEf");
 		options.addOption("cd", "camel_declaring", false, "Convert all to camel style with declaring. AB_Cd_ef -> private String abCdEf;");
-		options.addOption("cu", "camel_underscore", false, "Convert underscore to camel style only. AB_Cd_ef -> AB_CdEf");
 		options.addOption("cj", "camel_java", false, "Convert Java variables to camel style. private String AB_Cd_ef -> private String ABCdEf");
-		options.addOption("cjm", "camel_java_method", false, "Convert Java method underscore to camel style. abc.ab_cd_ef_gh() -> abc.abCdEfGh()");
-		options.addOption("cm", "camel_mybatis", false, "Convert queries of MyBatis to camel style. <result property=\"ab_cd_ef\" column=\"ab_cd_ef\"/> -> <result property=\"abCdEf\" column=\"abCdEf\"/>");
-		options.addOption("cmu", "camel_mybatis_only", false, "Convert variables of MyBatis to camel style only. <result property=\"ab_cd_ef\" column=\"ab_cd_ef\"/> -> <result property=\"abCdEf\" column=\"ab_cd_ef\"/>");
-		options.addOption("um", "underscore_mybatis", false, "Convert all to underscore style for mybatis. <result property=\"abCdEf\" column=\"abCdEf\"/> -> <result property=\"abCdEf\" column=\"ab_cd_ef\"/>");
 		options.addOption("sc", "camel_space", false, "Convert camel style to space separate style. AbCdEf -> Ab cd ef");
 		options.addOption("us", "space_underscore", false, "Convert space camel style to underscore style. Ab Cd ef -> ab_cd_ef");
 		options.addOption("u", "underscore", false, "Convert all to underscore style. AbCdEF -> Ab_cd_e_f");
-		options.addOption("ru", "remove_underscore", false, "Change underscores to spaces. ab_cd -> Ab Cd");
-		options.addOption("f", "first", false, "Convert first character to upper case. ab -> Ab");
+		options.addOption("us", "underscore_space", false, "Change underscores to spaces. ab_cd -> Ab Cd");
+		options.addOption("f", "first", false, "Convert first character of lines to upper case. ab -> Ab");
 		options.addOption("up", "upper", false, "Convert all characters to upper case. ab -> AB");
-		options.addOption("qs", "query_select", true, "Convert to selecting query.");
-		options.addOption("qu", "query_update", false, "Convert to updating query with if statement.");
-		options.addOption("qi", "query_insert", false, "Convert to inserting query.");
-		options.addOption("qw", "query_where", false, "Convert to where query with if statement.");
-		options.addOption("qr", "query_result", false, "Convert to query result object.");
-		options.addOption("rm", "redmine", false, "Convert Markdown syntax to Redmine syntax.");
-		options.addOption("md", "markdown", false, "Convert Redmine syntax to Markdown syntax.");
-		options.addOption("rr", "redmine_respect", false, "Convert Markdown syntax to Redmine syntax and make respect in Korean.");
-		options.addOption("mr", "markdown_rough", false, "Convert Redmine syntax to Markdown syntax and make rougth in Korean.");
-		options.addOption("tx", "text", false, "Convert Markdown syntax to plain text.");
+		options.addOption("qs", "query_select", true, "Make listing columns in selection query.");
+		options.addOption("qu", "query_update", false, "Make listing columns with if statement in MyBatis.");
+		options.addOption("qi", "query_insert", false, "Make inserting query from column names in MyBatis.");
+		options.addOption("qw", "query_where", false, "Make where query with if statement in MyBatis.");
+		options.addOption("qr", "query_result", false, "Make result object in MyBatis.");
+		options.addOption("rm", "redmine", false, "Convert Markdown to Redmine syntax.");
+		options.addOption("md", "markdown", false, "Convert Redmine to Markdown syntax.");
+		options.addOption("rr", "redmine_respect", false, "Convert Markdown to Redmine syntax and make respect in Korean.");
+		options.addOption("mr", "markdown_rough", false, "Convert Redmine to Markdown syntax and make rougth in Korean.");
+		options.addOption("tx", "text", false, "Convert Markdown text to plain text.");
 		options.addOption("rs", "respect", false, "Convert rougth words to respect in Korean.");
 		options.addOption("rg", "rough", false, "Convert respect words to rough in Korean.");
-		options.addOption("sj", "strip_json", false, "Strip escaped strings in JSON.");		
-		options.addOption("pj", "pretty_json", false, "Make JSON pretty.");		
+		options.addOption("sj", "strip_json", false, "Strip escaped strings in JSON. \\\" to \", \"{ to {, }\" to }");		
+		options.addOption("pj", "pretty_json", false, "Make JSON pretty.");
 		options.addOption("spj", "strip_pretty_json", false, "Make JSON striped and pretty.");		
-		options.addOption("yj", "yaml_json", false, "Convert YAML to JSON.");		
+		options.addOption("yj", "yaml_json", false, "Convert YAML to JSON.");
+		options.addOption("cy", "check_yaml", false, "Check YAML format.");
 		options.addOption("cs", "convert_special", false, "Convert escaped characters to real characters.");
 		options.addOption("gm", "git_message", false, "Convert '-' to ': ' and '_' to ' '.");
+		options.addOption("eb", "encode_base64", false, "Encode original to base64 encoding.");
+		options.addOption("db", "decode_base64", false, "Decode base64 encoding to original.");
 
 		// parsing arguments
 		CommandLineParser parser = new BasicParser();
@@ -154,24 +153,8 @@ public class App {
 					str = convertUnderscoreToCarmelWithDeclaring(str);
 				}
 				
-				if (cmd.hasOption("cu")) {
-					str = convertUnderscoreToCarmelOnly(str);
-				}
-
 				if (cmd.hasOption("cj")) {
 					str = convertJavaUnderscoreToCarmel(str);
-				}
-				
-				if (cmd.hasOption("cjm")) {
-					str = convertJavaMethodUnderscoreToCarmel(str);
-				}
-
-				if (cmd.hasOption("cm")) {
-					str = convertMyBatisUnderscoreToCarmel(str);
-				}
-				
-				if (cmd.hasOption("cmu")) {
-					str = convertMyBatisUnderscoreVariablesToCarmelOnly(str);
 				}
 				
 				if (cmd.hasOption("sc")) {
@@ -186,12 +169,8 @@ public class App {
 					str = convertCarmelToUnderscore(str);
 				}
 				
-				if (cmd.hasOption("um")) {
-					str = convertCarmelToUnderscoreMyBatis(str);
-				}
-
-				if (cmd.hasOption("ru")) {
-					str = removeUnderscore(str);
+				if (cmd.hasOption("us")) {
+					str = convertUnderscoreToSpace(str);
 				}
 
 				if (cmd.hasOption("f")) {
@@ -265,9 +244,11 @@ public class App {
 					str = stripEscapedJson(str);
 					str = makeJsonPretty(str);
 				}
-
 				if (cmd.hasOption("yj")) {
 					str = yamlToJson(str);
+				}
+				if (cmd.hasOption("cy")) {
+					str = checkYamlFormat(str);
 				}
 
 				if (cmd.hasOption("cs")) {
@@ -276,6 +257,13 @@ public class App {
 
 				if (cmd.hasOption("gm")) {
 					str = convertBranchNameToGitMessage(str);
+				}
+
+				if (cmd.hasOption("eb")) {
+					str = encodeToBase64(str);
+				}
+				if (cmd.hasOption("db")) {
+					str = decodeFromBase64(str);
 				}
 
 				if (str != null && !str.isEmpty()) {
@@ -373,30 +361,6 @@ public class App {
 		return convertedString.toString();
 	}
 	
-	private static String convertUnderscoreToCarmelOnly(String inputString) {
-		StringBuffer convertedString = new StringBuffer();
-		boolean needUpperCase = false;
-		char lastChar = 'A';
-		for (char currentChar : inputString.toCharArray()) {
-			if (currentChar == '_') {
-				if (Character.isLowerCase(lastChar)) {
-					needUpperCase = true;
-				} else {
-					convertedString.append(currentChar);
-				}
-			} else {
-				if (needUpperCase) {
-					currentChar = Character.toUpperCase(currentChar);
-					needUpperCase = false;
-				}
-				convertedString.append(currentChar);
-			}
-			lastChar = currentChar;
-		}
-
-		return convertedString.toString();
-	}
-
 	private static String convertJavaUnderscoreToCarmel(String inputString) {
 		StringBuffer convertedString = new StringBuffer();
 		boolean needUpperCase = false;
@@ -426,107 +390,6 @@ public class App {
 		return convertedString.toString();
 	}
 
-	private static String convertJavaMethodUnderscoreToCarmel(String inputString) {
-		StringBuffer convertedString = new StringBuffer();
-		boolean needUpperCase = false;
-		boolean starting = false;
-		char lastChar = 'a';
-		for (char currentChar : inputString.toCharArray()) {
-			if (currentChar == '.') {
-				starting = true;
-			} else if (currentChar == '(' || currentChar == '"' || currentChar == '/' || currentChar == '\'' || currentChar == ';') {
-				starting = false;
-			}
-
-			if (starting) {
-				if (Character.isLowerCase(lastChar) && currentChar == '_') {
-					needUpperCase = true;
-				} else {
-					if (needUpperCase) {
-						currentChar = Character.toUpperCase(currentChar);
-						needUpperCase = false;
-					} 
-					convertedString.append(currentChar);
-				}
-			} else {
-				convertedString.append(currentChar);
-			}
-			lastChar = currentChar;
-		}
-
-		return convertedString.toString();
-	}
-
-	private static String convertMyBatisUnderscoreToCarmel(String inputString) {
-		boolean starting = false;
-
-		StringBuffer convertedString = new StringBuffer();
-		boolean needUpperCase = false;
-		StringBuffer last = new StringBuffer();
-		for (char currentChar : inputString.toCharArray()) {
-			if (currentChar == '"' || currentChar == '{' || currentChar == '}') {
-				starting = !starting;
-				if (!starting) {
-					last = new StringBuffer();
-				}
-			}
-
-			if (starting) {
-				if (currentChar == '_') {
-					needUpperCase = true;
-				} else {
-					if (needUpperCase) {
-						currentChar = Character.toUpperCase(currentChar);
-						needUpperCase = false;
-					} else if (Character.isUpperCase(currentChar)) {
-						currentChar = Character.toLowerCase(currentChar);
-					}
-					convertedString.append(currentChar);
-				}
-			} else {
-				convertedString.append(currentChar);
-				last.append(currentChar);
-			}
-		}
-
-		return convertedString.toString();
-	}
-	
-	private static String convertMyBatisUnderscoreVariablesToCarmelOnly(String inputString) {
-		boolean starting = false;
-
-		StringBuffer convertedString = new StringBuffer();
-		boolean needUpperCase = false;
-		char lastChar = 'A';
-		StringBuffer last = new StringBuffer();
-		for (char currentChar : inputString.toCharArray()) {
-			if (currentChar == '"' || currentChar == '{' || currentChar == '}') {
-				starting = !starting;
-				if (!starting)
-					last = new StringBuffer();
-			}
-
-			if (starting) {
-				if (Character.isLowerCase(lastChar) && currentChar == '_' && !last.toString().endsWith(" column=")) {
-					needUpperCase = true;
-				} else {
-					if (needUpperCase) {
-						currentChar = Character.toUpperCase(currentChar);
-						needUpperCase = false;
-					} 
-					convertedString.append(currentChar);
-				}
-			} else {
-				convertedString.append(currentChar);
-				last.append(currentChar);
-			}
-			
-			lastChar = currentChar;
-		}
-
-		return convertedString.toString();
-	}
-	
 	private static String convertCarmelToSpace(String inputString) {
 		StringBuffer convertedString = new StringBuffer();
 		int count = 0;
@@ -577,40 +440,8 @@ public class App {
 
 		return convertedString.toString();
 	}
-	
-	private static String convertCarmelToUnderscoreMyBatis(String inputString) {
-		//inputString = inputString.toLowerCase();
 
-		StringBuffer convertedString = new StringBuffer();
-		int count = 0;
-		StringBuilder last = new StringBuilder();
-		for (char currentChar : inputString.toCharArray()) {
-			if (currentChar == '"') {
-				++count;
-			}
-			if (currentChar == '>') {
-				count = 0;
-				last = new StringBuilder();
-			}
-					
-			if (count == 3 && last.toString().endsWith(" column=") && Character.isUpperCase(currentChar)) {
-				convertedString.append('_');
-				convertedString.append(Character.toLowerCase(currentChar));
-			} else {
-				convertedString.append(currentChar);
-			}
-			
-
-			if (count < 3) {
-				last.append(currentChar);
-			}
-			
-		}
-
-		return convertedString.toString();
-	}
-
-	private static String removeUnderscore(String inputString) {
+	private static String convertUnderscoreToSpace(String inputString) {
 		inputString = inputString.toLowerCase();
 
 		StringBuffer convertedString = new StringBuffer();
@@ -992,6 +823,27 @@ public class App {
 
 	    Gson gson = new Gson(); 
 	    return makeJsonPretty(gson.toJson(map));
+	}
+	
+	private static String checkYamlFormat(String yamlString) {
+	    Yaml yaml= new Yaml();
+	    try {
+		    @SuppressWarnings("unchecked")
+			Map<String, Object> map= (Map<String, Object>) yaml.load(yamlString);
+		    return "Valid";
+	    } catch (Exception e) {
+	    	e.printStackTrace();
+	    	return "Invalid!";
+	    }
+	}
+	
+	private static String encodeToBase64(String inputString) {
+		return Base64.getEncoder().encodeToString(inputString.getBytes());
+	}
+
+	private static String decodeFromBase64(String encodedString) {
+		byte[] decodedBytes = Base64.getDecoder().decode(encodedString);
+		return new String(decodedBytes);
 	}
 
 	/**
