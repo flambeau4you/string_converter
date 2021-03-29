@@ -740,6 +740,8 @@ public class App {
 				replaceAll("보다\\.", "봅니다.").
 				replaceAll("낸다\\.", "냅니다.").
 				replaceAll("는다\\.", "습니다.").
+				replaceAll("한다\\.", "합니다.").
+				replaceAll("온다\\.", "오네요.").
 				replaceAll("([^니])다\\.", "$1습니다.");
 		
 		return convertedString;
@@ -763,6 +765,8 @@ public class App {
 				replaceAll("셉니다\\.", "세다.").
 				replaceAll("봅니다\\.", "보다.").
 				replaceAll("냅니다\\.", "낸다.").
+				replaceAll("합니다\\.", "한다.").
+				replaceAll("오네요\\.", "온다.").
 				replaceAll("습니다\\.", "다.");
 		
 		return convertedString;
