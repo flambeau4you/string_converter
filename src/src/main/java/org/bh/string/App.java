@@ -677,7 +677,7 @@ public class App {
 					replaceAll("^\t1\\. ", "## ").
 					replaceAll("^    1\\. ", "## ").
 					replaceAll("^\t\\* ", "** ").
-					replaceAll("^    \\* ", "** ").
+					replaceAll("^  +\\* ", "** ").
 					replaceAll("^`", "@").
 					replaceAll("`$", "@").
 					replaceAll("<http([^>]*)>", "http$1").
@@ -754,8 +754,8 @@ public class App {
 				replaceAll("했습니다\\.", "했다.").
 				replaceAll("렇습니다\\.", "렇다.").
 				replaceAll("됩니다\\.", "된다.").
-				replaceAll("입니다\\.", "이다.").
 				replaceAll("보입니다\\.", "보인다.").
+				replaceAll("입니다\\.", "이다.").
 				replaceAll("진니다\\.", "진다.").
 				replaceAll("큰니다\\.", "크다.").
 				replaceAll("옵니다\\.", "온다.").
