@@ -54,8 +54,8 @@ public class App {
 		options.addOption("dt8", "date_8", false, "Current date. Format: YYYYMMDD");
 		options.addOption("dt10", "date_10", false, "Current date. Format: YYYY-MM-DD");
 		options.addOption("c", "camel", false, "Convert all to camel style. AB_Cd_ef -> abCdEf");
-		options.addOption("cd", "camel_declaring", false, "Convert all to camel style with declaring. AB_Cd_ef -> private String abCdEf;");
-		options.addOption("cj", "camel_java", false, "Convert Java variables to camel style. private String AB_Cd_ef -> private String ABCdEf");
+		options.addOption("jd", "java_declaring", false, "Convert all to camel style with declaring. AB_Cd_ef -> private String abCdEf;");
+		options.addOption("jc", "java_camel", false, "Convert Java variables to camel style. private String AB_Cd_ef -> private String ABCdEf");
 		options.addOption("sc", "camel_space", false, "Convert camel style to space separate style. AbCdEf -> Ab cd ef");
 		options.addOption("us", "space_underscore", false, "Convert space camel style to underscore style. Ab Cd ef -> ab_cd_ef");
 		options.addOption("u", "underscore", false, "Convert all to underscore style. AbCdEF -> Ab_cd_e_f");
@@ -149,11 +149,11 @@ public class App {
 					str = convertUnderscoreToCarmel(str);
 				}
 				
-				if (cmd.hasOption("cd")) {
-					str = convertUnderscoreToCarmelWithDeclaring(str);
+				if (cmd.hasOption("jd")) {
+					str = convertUnderscoreToCarmelWithJavaDeclaring(str);
 				}
 				
-				if (cmd.hasOption("cj")) {
+				if (cmd.hasOption("jc")) {
 					str = convertJavaUnderscoreToCarmel(str);
 				}
 				
@@ -344,13 +344,19 @@ public class App {
 		return convertedString.toString();
 	}
 	
-	private static String convertUnderscoreToCarmelWithDeclaring(String inputString) {
+	private static String convertUnderscoreToCarmelWithJavaDeclaring(String inputString) {
 		String outputString = convertUnderscoreToCarmel(inputString);
 		StringBuffer convertedString = new StringBuffer();
 		String[] lines = outputString.split("\n");
 		for (String line : lines) {
 			line = line.trim();
-			convertedString.append("private String " + line + ";\r\n");
+			convertedString.append("private ");
+			if (line.startsWith("IS_")) {
+				convertedString.append("Boolean");
+			} else {
+				convertedString.append("String");
+			}
+			convertedString.append(" " + line + ";\r\n");
 			if (line.endsWith("_CD")) {
 				String codeColumn = line.substring(0, line.length() - 3);
 				convertedString.append("private String " + codeColumn + "Value;\r\n");
