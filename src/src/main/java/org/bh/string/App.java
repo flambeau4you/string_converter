@@ -684,8 +684,9 @@ public class App {
 					replaceAll("^    1\\. ", "## ").
 					replaceAll("^\t\\* ", "** ").
 					replaceAll("^  +\\* ", "** ").
-					replaceAll("^`", "@").
-					replaceAll("`$", "@").
+					replaceAll("`", "@").
+					replaceAll("`", "@").
+					replaceAll("\\\\", "").
 					replaceAll("<http([^>]*)>", "http$1").
 					replaceAll("\\([0-9]+-[0-9]+\\)$", "").
 					replaceAll("\\([0-9]+-[0-9]+-[0-9]+\\)$", "");
