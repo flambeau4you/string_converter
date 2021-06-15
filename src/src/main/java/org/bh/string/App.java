@@ -356,12 +356,12 @@ public class App {
 			} else {
 				convertedString.append("String");
 			}
-			convertedString.append(" " + line + ";\r\n");
+			convertedString.append(" " + line + ";\n");
 			if (line.endsWith("_CD")) {
 				String codeColumn = line.substring(0, line.length() - 3);
-				convertedString.append("private String " + codeColumn + "Value;\r\n");
+				convertedString.append("private String " + codeColumn + "Value;\n");
 			} else if (line.endsWith("State") || line.endsWith("Status")) {
-				convertedString.append("private String " + line + "Value;\r\n");
+				convertedString.append("private String " + line + "Value;\n");
 			}
 		}
 		return convertedString.toString();
@@ -519,16 +519,16 @@ public class App {
 				convertedString.append(name);
 				if (name.endsWith("_CD")) {
 					String codeColumn = name.substring(0, name.length() - 3);
-					convertedString.append(",\r\ngetCodeValue('" + tableName + "', '" + codeColumn + "', " + name + ") " + codeColumn + "_VALUE");
+					convertedString.append(",\ngetCodeValue('" + tableName + "', '" + codeColumn + "', " + name + ") " + codeColumn + "_VALUE");
 				} else if (name.endsWith("STATE") || name.endsWith("STATUS"))
 				{
-					convertedString.append(", \r\ngetCodeValue('" + tableName + "', '" + name + "', " + name + ") " + name + "_VALUE");
+					convertedString.append(", \ngetCodeValue('" + tableName + "', '" + name + "', " + name + ") " + name + "_VALUE");
 				}
 			}
 			++count;
 			if (count < lines.length) {
 				convertedString.append(",");
-				convertedString.append("\r\n");
+				convertedString.append("\n");
 			}
 		}
 
@@ -551,12 +551,12 @@ public class App {
 			if (name.endsWith("CREATED_TIME") || name.endsWith("UPDATED_TIME")) {
 				convertedString.append(name + " = CURRENT_TIMESTAMP,");
 			} else {
-                convertedString.append("<if test=\"" + convertUnderscoreToCarmel(name) + " != null\">\r\n    " 
+                convertedString.append("<if test=\"" + convertUnderscoreToCarmel(name) + " != null\">\n    " 
                 		+ name 
-                        + " = #{" + convertUnderscoreToCarmel(name) + "},\r\n</if>");
+                        + " = #{" + convertUnderscoreToCarmel(name) + "},\n</if>");
 			}
 			if (count < lines.length) {
-				convertedString.append("\r\n");
+				convertedString.append("\n");
 			}
 		}
 
@@ -581,12 +581,12 @@ public class App {
 			if (count < lines.length) {
 				convertedColumnString.append(",");
 				convertedValueString.append(",");
-                convertedColumnString.append("\r\n");
-                convertedValueString.append("\r\n");
+                convertedColumnString.append("\n");
+                convertedValueString.append("\n");
 			}
 		}
 
-		return convertedColumnString.toString() + "\r\n) values (\r\n" + convertedValueString.toString() + "\r\n)";
+		return convertedColumnString.toString() + "\n) values (\n" + convertedValueString.toString() + "\n)";
 	}
 	
 	private static String convertWhereQueryWithIfStatement(String inputString) {
@@ -600,10 +600,10 @@ public class App {
 			if (!name.toLowerCase().startsWith("is_")) {				
 				convertedString.append(" and " + camelName + ".length() > 0");
 			}
-			convertedString.append("\">\r\n"+ "    and " + name + " = #{" + camelName + "}\r\n</if>");
+			convertedString.append("\">\n"+ "    and " + name + " = #{" + camelName + "}\n</if>");
 			++count;
 			if (count < lines.length) {
-				convertedString.append("\r\n");
+				convertedString.append("\n");
 			}
 		}
 
@@ -624,7 +624,7 @@ public class App {
 			}
 			++count;
 			if (count < lines.length) {
-				convertedString.append("\r\n");
+				convertedString.append("\n");
 			}
 		}
 
@@ -641,7 +641,7 @@ public class App {
 		StringBuffer convertedString = new StringBuffer();
 		for (String line : inputString.split("\n")) {
 			String name = line.trim();
-			convertedString.append("public static final String " + name + " = \"" + name + "\";\r\n");
+			convertedString.append("public static final String " + name + " = \"" + name + "\";\n");
 		}
 
 		return convertedString.toString();
@@ -691,7 +691,7 @@ public class App {
 					replaceAll("\\([0-9]+-[0-9]+\\)$", "").
 					replaceAll("\\([0-9]+-[0-9]+-[0-9]+\\)$", "");
 			}
-			convertedString.append(newLine + "\r\n");
+			convertedString.append(newLine + "\n");
 		}
 		return convertedString.toString();
 	}
