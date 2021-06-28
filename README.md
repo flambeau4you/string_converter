@@ -6,66 +6,51 @@ It converts text strings to other formatted strings.
 
 ```txt
 usage: java -jar string.jar [OPTION..] STRING
- -c,--camel                  Convert all to camel style. AB_Cd_ef ->
-                             abCdEf
- -cd,--camel_declaring       Convert all to camel style with declaring.
-                             AB_Cd_ef -> private String abCdEf;
- -cj,--camel_java            Convert Java variables to camel style.
-                             private String AB_Cd_ef -> private String
-                             ABCdEf
- -cjm,--camel_java_method    Convert Java method underscore to camel
-                             style. abc.ab_cd_ef_gh() -> abc.abCdEfGh()
- -cm,--camel_mybatis         Convert queries of MyBatis to camel style.
-                             <result property="ab_cd_ef"
-                             column="ab_cd_ef"/> -> <result
-                             property="abCdEf" column="abCdEf"/>
- -cmu,--camel_mybatis_only   Convert variables of MyBatis to camel style
-                             only. <result property="ab_cd_ef"
-                             column="ab_cd_ef"/> -> <result
-                             property="abCdEf" column="ab_cd_ef"/>
- -cs,--convert_special       Convert escaped characters to real
-                             characters.
- -cu,--camel_underscore      Convert underscore to camel style only.
-                             AB_Cd_ef -> AB_CdEf
- -dt10,--date_10             Current date. Format: YYYY-MM-DD
- -dt8,--date_8               Current date. Format: YYYYMMDD
- -f,--first                  Convert first character to upper case. ab ->
-                             Ab
- -gm,--git_message           Convert '-' to ': ' and '_' to ' '.
- -h,--help                   Show this help message.
- -md,--markdown              Convert Redmine syntax to Markdown syntax.
- -mr,--markdown_rough        Convert Redmine syntax to Markdown syntax and
-                             make rougth in Korean.
- -p,--pattern <arg>          Make patterned string.
- -pj,--pretty_json           Make JSON pretty.
- -qi,--query_insert          Convert to inserting query.
- -qr,--query_result          Convert to query result object.
- -qs,--query_select          Convert to selecting query.
- -qu,--query_update          Convert to updating query with if statement.
- -qw,--query_where           Convert to where query with if statement.
- -rg,--rough                 Convert respect words to rough in Korean.
- -rm,--redmine               Convert Markdown syntax to Redmine syntax.
- -rr,--redmine_respect       Convert Markdown syntax to Redmine syntax and
-                             make respect in Korean.
- -rs,--respect               Convert rougth words to respect in Korean.
- -ru,--remove_underscore     Change underscores to spaces. ab_cd -> Ab Cd
- -sc,--camel_space           Convert camel style to space separate style.
-                             AbCdEf -> Ab cd ef
- -sj,--strip_json            Strip escaped strings in JSON.
- -sp,--show_pattern          Show configured patterns.
- -spj,--strip_pretty_json    Make JSON striped and pretty.
- -tx,--text                  Convert Markdown syntax to plain text.
- -u,--underscore             Convert all to underscore style. AbCdEF ->
-                             Ab_cd_e_f
- -um,--underscore_mybatis    Convert all to underscore style for mybatis.
-                             <result property="abCdEf" column="abCdEf"/>
-                             -> <result property="abCdEf"
-                             column="ab_cd_ef"/>
- -up,--upper                 Convert all characters to upper case. ab ->
-                             AB
- -us,--space_underscore      Convert space camel style to underscore
-                             style. Ab Cd ef -> ab_cd_ef
- -yj,--yaml_json             Convert YAML to JSON.
+ -c,--camel                 Convert all to camel style. AB_Cd_ef -> abCdEf
+ -cs,--convert_special      Convert escaped characters to real characters.
+ -cy,--check_yaml           Check YAML format.
+ -db,--decode_base64        Decode base64 encoding to original.
+ -dt10,--date_10            Current date. Format: YYYY-MM-DD
+ -dt8,--date_8              Current date. Format: YYYYMMDD
+ -eb,--encode_base64        Encode original to base64 encoding.
+ -f,--first                 Convert first character of lines to upper
+                            case. ab -> Ab
+ -gm,--git_message          Convert '-' to ': ' and '_' to ' '.
+ -h,--help                  Show this help message.
+ -jc,--java_camel           Convert Java variables to camel style. private
+                            String AB_Cd_ef -> private String ABCdEf
+ -jd,--java_declaring       Convert all to camel style with declaring.
+                            AB_Cd_ef -> private String abCdEf;
+ -md,--markdown             Convert Redmine to Markdown syntax.
+ -mr,--markdown_rough       Convert Redmine to Markdown syntax and make
+                            rougth in Korean.
+ -p,--pattern <arg>         Make patterned string.
+ -pj,--pretty_json          Make JSON pretty.
+ -qi,--query_insert         Make inserting query from column names in
+                            MyBatis.
+ -qr,--query_result         Make result object in MyBatis.
+ -qs,--query_select <arg>   Make listing columns in selection query.
+ -qu,--query_update         Make listing columns with if statement in
+                            MyBatis.
+ -qw,--query_where          Make where query with if statement in MyBatis.
+ -rg,--rough                Convert respect words to rough in Korean.
+ -rm,--redmine              Convert Markdown to Redmine syntax.
+ -rr,--redmine_respect      Convert Markdown to Redmine syntax and make
+                            respect in Korean.
+ -rs,--respect              Convert rougth words to respect in Korean.
+ -sc,--camel_space          Convert camel style to space separate style.
+                            AbCdEf -> Ab cd ef
+ -sj,--strip_json           Strip escaped strings in JSON. \" to ", "{ to
+                            {, }" to }
+ -sp,--show_pattern         Show configured patterns.
+ -spj,--strip_pretty_json   Make JSON striped and pretty.
+ -tx,--text                 Convert Markdown text to plain text.
+ -u,--underscore            Convert all to underscore style. AbCdEF ->
+                            Ab_cd_e_f
+ -up,--upper                Convert all characters to upper case. ab -> AB
+ -us,--underscore_space     Change underscores to spaces. ab_cd -> Ab Cd
+ -yj,--yaml_json            Convert YAML to JSON.
+
 ```
 
 If the STRING is not inputted, the clipboard string is used.
@@ -132,7 +117,7 @@ private String virtual_ip_address;
 
 Execute
 
-> java -jar string.jar -cj
+> java -jar string.jar -jc
 
 Output:
 
